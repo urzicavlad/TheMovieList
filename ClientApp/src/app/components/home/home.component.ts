@@ -18,7 +18,7 @@ export class HomeComponent {
   }
 
   toggleDialog() {
-    this.dialogService.openYesNoDialog({title: 'Question 1', question: 'Agrree or not?', result: false})
+    this.dialogService.openYesNoDialog({title: 'Question 1', question: 'Agree or not?', result: false})
       .subscribe(result => console.log(result));
   }
 

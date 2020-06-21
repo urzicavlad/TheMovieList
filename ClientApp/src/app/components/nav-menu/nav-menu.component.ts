@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {SecurityService} from '../../services/security/security.service';
+import {ApplicationService} from '../../services/application.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -9,7 +10,7 @@ import {SecurityService} from '../../services/security/security.service';
 export class NavMenuComponent {
   isExpanded = false;
 
-  constructor(public securityService: SecurityService,) {
+  constructor(public securityService: SecurityService, public applicationService: ApplicationService) {
   }
 
   collapse() {
