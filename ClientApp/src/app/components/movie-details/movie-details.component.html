@@ -1,0 +1,49 @@
+<h1 class="mat-display-4">{{movie.title}}</h1>
+
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Actors</mat-panel-title>
+      <mat-panel-description>Actors from {{movie.title}}</mat-panel-description>
+    </mat-expansion-panel-header>
+    <div *ngFor="let actor of movie.actors">
+      <mat-label>{{actor}}</mat-label>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Storyline</mat-panel-title>
+      <mat-panel-description>Storyline for {{movie.title}}</mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <p>{{movie.storyline}}</p>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Comments</mat-panel-title>
+      <mat-panel-description>Add a comment to {{movie.title}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div *ngFor="let comment of movie.comments">
+      <app-movie-comment [comment]="comment"></app-movie-comment>
+    </div>
+
+    <mat-card>
+      <mat-card-title>Add a comment!</mat-card-title>
+      <mat-card-content>
+        <mat-form-field>
+          <mat-label>Comment</mat-label>
+          <textarea matInput></textarea>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button>Submit</button>
+      </mat-card-actions>
+    </mat-card>
+
+  </mat-expansion-panel>
+</mat-accordion>
