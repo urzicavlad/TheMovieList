@@ -34,7 +34,7 @@ namespace TheMovieList.Controllers
         [HttpPost]
         public async Task<ActionResult> Register([FromBody] RegisterModel registerModel)
         {
-            IdentityUser identityUser = new IdentityUser() { Email = registerModel.Email, UserName = registerModel.Email };
+            IdentityUser identityUser = new IdentityUser() { Email = registerModel.Email, UserName = registerModel.Email  };
 
             IdentityResult result = await userManager.CreateAsync(identityUser, registerModel.Password);
 

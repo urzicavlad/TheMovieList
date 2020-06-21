@@ -89,9 +89,7 @@ namespace TheMovieList
         private void addDatabaseConfigurations(IServiceCollection services)
         {
             services.AddDbContext<MoviesDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("MoviesDbConnectionString")));
-            services.AddIdentity<IdentityUser, IdentityRole>()
-   .AddDefaultTokenProviders()
-   .AddEntityFrameworkStores<MoviesDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders().AddEntityFrameworkStores<MoviesDbContext>();
         }
 
         private void addSwagger(IServiceCollection services)
