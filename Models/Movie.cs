@@ -13,7 +13,7 @@ namespace TheMovieList.Models
         public string StoryLine { get; set; }
         public string PosterUrl { get; set; }
         public List<Comment> Comments { get; set; }
-        public List<Genre> Genres { get; set; }
+        public List<Genre> Genres { get; set; } = new List<Genre>();
         public List<MovieActor> Actors { get; set; } = new List<MovieActor>();
         
 

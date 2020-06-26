@@ -3,10 +3,10 @@
 
     public enum GenreType
     {
-        Drama,
-        Comedy,
-        Action,
-        Adventure
+        Drama = 1,
+        Comedy = 2,
+        Action = 3,
+        Adventure = 4
 
     }
 

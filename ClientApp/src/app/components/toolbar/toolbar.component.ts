@@ -23,6 +23,7 @@ export class ToolbarComponent {
 
   @Input() numberOfItems: number;
   @Input() activeToolbar;
+  @Input() toolbarTitle = 'Toolbar';
   @Output() toolbarEvent: EventEmitter<ToolbarEvent> = new EventEmitter<ToolbarEvent>();
 
 
@@ -39,7 +40,6 @@ export class ToolbarComponent {
   onEdit() {
     console.log('Edit view!');
     this.toolbarEvent.emit(ToolbarEvent.EDIT);
-    ;
   }
 
   onMore() {

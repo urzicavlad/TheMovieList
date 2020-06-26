@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using TheMovieList.Models;
 using TheMovieList.ModelViews;
 using TheMovieList.Mappers;
+using System;
+using TheMovieList.Models;
 
 namespace TheMovieList.Mappers
 {
@@ -49,7 +51,13 @@ namespace TheMovieList.Mappers
             result.OriginalTitle = movieRequest.OriginalTitle;
             result.StoryLine = movieRequest.StoryLine;
             result.PosterUrl = movieRequest.PosterUrl;
-            result.Genres = movieRequest.Genres;
+            foreach (var genreAsString in movieRequest.Genres)
+            {
+                GenreType genreType = (GenreType)Enum.Parse(typeof(GenreType), genreAsString);
+                Genre genre = new Genre();
+                genre.GenreType = genreType;
+                result.Genres.Add(genre);
+            }
             return result;
         }
     }

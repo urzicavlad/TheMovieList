@@ -8,8 +8,8 @@ namespace TheMovieList.Models
         public string Message { get; set; }
         public Movie Movie { get; set; }
         public User Author { get; set; }
-        List<User> ThumbsUp { get; set; }
-        List<User> ThumbsDown { get; set; }
+        public List<User> ThumbsUp { get; set; }
+        public List<User> ThumbsDown { get; set; }
 
     }
 }

@@ -18,6 +18,10 @@ import {MovieCommentComponent} from './components/movie-comment/movie-comment.co
 import {RegisterComponent} from './components/register/register.component';
 import {LoginComponent} from './components/login/login.component';
 import {SecurityModule} from './modules/security.module';
+import { ActorsTableComponent } from './components/actors-table/actors-table.component';
+import { CreateActorModalComponent } from './components/create-actor-modal/create-actor-modal.component';
+import { MovieCommentAddComponent } from './components/movie-comment-add/movie-comment-add.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +37,10 @@ import {SecurityModule} from './modules/security.module';
     MovieCommentComponent,
     RegisterComponent,
     LoginComponent,
+    ActorsTableComponent,
+    CreateActorModalComponent,
+    MovieCommentAddComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

@@ -7,6 +7,7 @@ using TheMovieList.Contexts;
 using TheMovieList.ModelViews;
 using TheMovieList.Mappers;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace TheMovieList.Controllers
 
@@ -16,7 +17,7 @@ namespace TheMovieList.Controllers
     [Route("[controller]")]
     public class MoviesController : ControllerBase
     {
-     
+
         private readonly MoviesDbContext _context;
 
         public MoviesController(MoviesDbContext context)
@@ -48,33 +49,27 @@ namespace TheMovieList.Controllers
                 .Include(movie => movie.Movie)
                 .Include(actor => actor.Actor)
                 .ToListAsync();
-            movie.Actors = movieActors; 
+            movie.Actors = movieActors;
             var comments = await _context.Comments
                                     .Where(comment => comment.Movie.Id == movieId)
                                     .Include(comment => comment.Movie)
+                                    .Include(comment => comment.Author)
+                                    .Include(comment => comment.ThumbsUp)
+                                    .Include(comment => comment.ThumbsDown)
                                     .ToListAsync();
-            movie.Comments = comments;                   
+            movie.Comments = comments;
             return Ok(MovieMapper.mapFromMovieToMovieResponse(movie));
         }
 
         [HttpGet("genres")]
         public async Task<ActionResult<IEnumerable<Movie>>> GetGenres()
         {
-            var result = _context.Genres as IQueryable<Genre>;
-            var genres = await result.ToListAsync();
-            return Ok(genres);
-        }
-
-        [HttpPost("genres")]
-        public async Task<ActionResult<IEnumerable<Movie>>> PostGenre(Genre genre)
-        {
-            var result = _context.Genres.Add(genre);
-            await _context.SaveChangesAsync();
-            return Ok(genre);
+            return Ok(Enum.GetValues(typeof(GenreType)));
         }
 
         [HttpPost]
-        public async Task<ActionResult<AddMovieResponse>> PostMovie(AddMovieRequest addMovieRequest){
+        public async Task<ActionResult<AddMovieResponse>> PostMovie(AddMovieRequest addMovieRequest)
+        {
             Movie movie = MovieMapper.mapFormAddMovieRequestToMovie(addMovieRequest);
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
@@ -88,6 +83,9 @@ namespace TheMovieList.Controllers
             var comments = await _context.Comments
                                     .Where(comment => comment.Movie.Id == movieId)
                                     .Include(comment => comment.Movie)
+                                    .Include(comment => comment.Author)
+                                    .Include(comment => comment.ThumbsUp)
+                                    .Include(comment => comment.ThumbsDown)
                                     .ToListAsync();
             return Ok(CommentMapper.mapFormCommentToCommentResponse(comments));
         }
@@ -96,7 +94,15 @@ namespace TheMovieList.Controllers
         public async Task<ActionResult<AddCommentResponse>> PostComment(long movieId, AddCommentRequest commentRequest)
         {
             var movie = await _context.Movies.Include(movie => movie.Comments).FirstOrDefaultAsync(movie => movie.Id == movieId);
+            User user;
+            if(commentRequest.Author != null){
+             user =  commentRequest.Author;
+
+            }else{
+             user =  _context.User.Where(user => user.Id == commentRequest.UserId).First();
+            }
             var comment = CommentMapper.mapFormAddCommentRequestToComment(commentRequest);
+            comment.Author = user;
             movie.Comments.Add(comment);
             await _context.SaveChangesAsync();
             return Ok(CommentMapper.mapFromCommentToAddCommentResponse(comment));
@@ -107,9 +113,19 @@ namespace TheMovieList.Controllers
         {
             var movie = await _context.Movies.Include(movie => movie.Comments).FirstOrDefaultAsync(movie => movie.Id == movieId);
             var actor = ActorMapper.mapFormAddActorRequestToActor(addActorRequest);
+            var foundActor = _context.Actor.Where(actor => actor.Name == addActorRequest.Name).ToArray();
             MovieActor movieActor = new MovieActor();
-            movieActor.Actor = actor;
-            movieActor.ActorId = actor.Id;
+            if (foundActor.Count() == 1)
+            {
+                actor = foundActor.First();
+                movieActor.Actor = actor;
+                movieActor.ActorId = actor.Id;
+            }
+            else
+            {
+                movieActor.Actor = actor;
+                movieActor.ActorId = actor.Id;
+            }
             movieActor.Movie = movie;
             movieActor.MovieId = movie.Id;
             movie.Actors.Add(movieActor);
@@ -119,7 +135,7 @@ namespace TheMovieList.Controllers
             return Ok(MovieMapper.mapFromMovieToMovieResponse(movie));
         }
 
-         [HttpGet("{movieId}/actors")]
+        [HttpGet("{movieId}/actors")]
         public async Task<ActionResult<List<ActorResponse>>> GetActors(long movieId)
         {
             var movie = await _context.Movies
@@ -127,18 +143,18 @@ namespace TheMovieList.Controllers
             .Include(movie => movie.Actors)
             .FirstOrDefaultAsync(movie => movie.Id == movieId);
 
-           var movieActors = await _context.MovieActors
-                .Where(movieActor => movieActor.MovieId == movieId)
-                .Include(movie => movie.Movie)
-                .Include(actor => actor.Actor)
-                .ToListAsync();
+            var movieActors = await _context.MovieActors
+                 .Where(movieActor => movieActor.MovieId == movieId)
+                 .Include(movie => movie.Movie)
+                 .Include(actor => actor.Actor)
+                 .ToListAsync();
 
             var actors = new List<Actor>();
             foreach (var movieActor in movieActors)
             {
                 actors.Add(movieActor.Actor);
-            }    
-            
+            }
+
             return Ok(ActorMapper.mapFormActorToActorResponse(actors));
         }
 

@@ -12,7 +12,7 @@ using System.Collections.Generic;
         public string OriginalTitle { get; set; }
         public string StoryLine { get; set; }
         public string PosterUrl { get; set; }
-        public List<Genre> Genres { get; set; }
+        public List<string> Genres { get; set; }
     }
 
  }

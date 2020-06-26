@@ -18,7 +18,8 @@ import {AuthenticationGuard} from '../services/security/authentication.guard';
       provide: HTTP_INTERCEPTORS,
       useClass: HttpRequestInterceptor,
       multi: true
-    }],
+    }
+    ],
   exports: []
 })
 

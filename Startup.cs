@@ -41,8 +41,7 @@ namespace TheMovieList
 
         private void addWebConfigurations(IServiceCollection services)
         {
-            services
-                .AddControllers()
+            services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -50,13 +49,10 @@ namespace TheMovieList
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly()));
 
-            services
-                .AddMvc(options =>
+            services.AddMvc(options =>
                 {
                     AuthorizationPolicy policy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
-
                     options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter(policy));
-
                     options.EnableEndpointRouting = false;
                 });
             services.AddControllersWithViews();
@@ -126,7 +122,7 @@ namespace TheMovieList
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Flowers API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "The Movie List API V1");
             });
             app.UseDeveloperExceptionPage();
             app.UseHttpsRedirection();

@@ -1,13 +1,15 @@
-import {Inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {EventEmitter, Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import {DialogData, DialogService} from './dialog.service';
 import {SnackbarData, SnackbarService} from './snackbar.service';
 import {Comment} from '../components/movie-comment/movie-comment.component';
+import {MovieApiService} from './api/movie.api.service';
+import {Actor} from './actor.service';
+
 
 export class Genre {
   id: number;
-  name: string;
+  genreType: string;
 }
 
 export class Movie {
@@ -15,12 +17,10 @@ export class Movie {
   title: string;
   originalTitle: string;
   duration: string;
-  storyline: string;
-  genres: string[];
-  ratings: string[];
+  storyLine: string;
+  genres: Genre[];
   releaseDate: string;
-  actors: string[];
-  imdbRating: number;
+  actors: Actor[];
   posterUrl: string;
   comments: Comment[];
 }
@@ -31,150 +31,49 @@ export class Movie {
 })
 export class MovieService {
 
-  constructor(private _http: HttpClient,
-              @Inject('BASE_URL') private baseUrl: string,
+  refreshEmitter: EventEmitter<void> = new EventEmitter<void>();
+
+  constructor(private movieApiService: MovieApiService,
               private dialogService: DialogService,
               private snackbarService: SnackbarService) {
   }
 
   loadMovies(): Observable<Movie[]> {
-    // return this._http.get<Movie[]>(`${this.baseUrl}movies`);
-    let movies: Movie[];
-    movies = [
-      {
-        id: 1,
-        title: 'Nyckeln till frihet',
-        genres: [
-          'Crime',
-          'Drama'
-        ],
-        ratings: [],
-        duration: 'PT142M',
-        releaseDate: '1995-03-03',
-        originalTitle: 'The Shawshank Redemption',
-        storyline: '',
-        actors: [
-          'Tim Robbins',
-          'Morgan Freeman',
-          'Bob Gunton'
-        ],
-        imdbRating: 9.3,
-        posterUrl: '',
-        comments: []
-      },
-      {
-        id: 2,
-        title: 'Gudfadern',
-        genres: [
-          'Crime',
-          'Drama'
-        ],
-        ratings: [],
-        duration: 'PT175M',
-        releaseDate: '1972-09-27',
-        originalTitle: 'The Godfather',
-        storyline: 'When the aging head of a famous crime family decides to transfer his position to one of his subalterns, a series of unfortunate events start happening to the family, and a war begins between all the well-known families leading to insolence, deportation, murder and revenge, and ends with the favorable successor being finally chosen.                Written by\nJ. S. Golden',
-        actors: [
-          'Marlon Brando',
-          'Al Pacino',
-          'James Caan'
-        ],
-        imdbRating: 9.2,
-        posterUrl: '',
-        comments: [{
-          message: 'Hello world!',
-          user: {
-            username: 'urzicavlad',
-            role: 'Admin',
-            avatar: 'https://avatars0.githubusercontent.com/u/37276343?s=460&u=c522513053d6b54d9219a7493997a9ca9ce624a1&v=4'
-          },
-          thumbsUp: [],
-          thumbsDown: [],
-        },
-          {
-            message: 'Hello world!',
-            user: {
-              username: 'urzicavlad',
-              role: 'Admin',
-              avatar: 'https://avatars0.githubusercontent.com/u/37276343?s=460&u=c522513053d6b54d9219a7493997a9ca9ce624a1&v=4'
-            },
-            thumbsUp: [],
-            thumbsDown: [],
-          },
-          {
-            message: 'Hello world!',
-            user: {
-              username: 'urzicavlad',
-              role: 'Admin',
-              avatar: 'https://avatars0.githubusercontent.com/u/37276343?s=460&u=c522513053d6b54d9219a7493997a9ca9ce624a1&v=4'
-            },
-            thumbsUp: [],
-            thumbsDown: [],
-          }
-
-        ]
-      },
-      {
-        id: 3,
-        title: 'Gudfadern del II',
-        genres: [
-          'Crime',
-          'Drama'
-        ],
-        ratings: [],
-        duration: 'PT202M',
-        releaseDate: '1975-07-28',
-        originalTitle: 'The Godfather: Part II',
-        storyline: '',
-        actors: [
-          'Al Pacino',
-          'Robert De Niro',
-          'Robert Duvall'
-        ],
-        imdbRating: 9.0,
-        posterUrl: '',
-        comments: []
-      }
-    ];
-    return of(movies);
+    return this.movieApiService.loadMovies();
   }
 
-  getAvailableGenres(): Observable<Genre[]> {
-    // return this._http.get<Genre[]>(`${this.baseUrl}movies/genres`);
-    const genre = [
-      {id: 1, name: 'Crime'},
-      {id: 2, name: 'Drama'},
-      {id: 3, name: 'Romance'},
-      {id: 4, name: 'Thriller'},
-      {id: 5, name: 'Action'},
-    ];
-    return of(genre);
+  getRefreshEmitter() {
+    return this.refreshEmitter;
   }
 
-  save(refreshDataCallback: Function) {
-    this.dialogService.openCreateDialog().subscribe(movieToBeSaved => {
+  save() {
+    this.dialogService.openCreateMovieDialog().subscribe(movieToBeSaved => {
       console.log('The dialog was closed');
       console.log(`Movie: ${movieToBeSaved} will be saved!`);
       if (movieToBeSaved) {
-        this._http.post<Movie>(`${this.baseUrl}movies`, movieToBeSaved)
+        this.movieApiService.save(movieToBeSaved)
           .subscribe
           (
-            () => {
+            (savedMovie) => {
               const snackBar = <SnackbarData>{message: 'Movie was successfully saved!', action: 'Close', duration: 2000};
               this.snackbarService.openSnackBar(snackBar);
-              refreshDataCallback();
+              movieToBeSaved.actors.forEach(actor => {
+                this.movieApiService.addActor(savedMovie.id, actor);
+              });
             },
             () => {
               const snackBar = <SnackbarData>{message: 'Cannot save Movie - maybe it is our fault!', action: 'Close', duration: 2000};
               this.snackbarService.openSnackBar(snackBar);
-              refreshDataCallback();
+            },
+            () => {
+              this.refreshEmitter.emit();
             }
           );
       }
     });
   }
 
-  edit(oldMovie: Movie, refreshDataCallback: Function) {
+  edit(oldMovie: Movie) {
     // this.dialogService.openEditTaskDialog(oldMovie).subscribe(movieToBeEdited => {
     //   console.log('The dialog was closed');
     //   if (movieToBeEdited) {
@@ -198,7 +97,7 @@ export class MovieService {
     // });
   }
 
-  delete(movie: Movie, refreshDataCallback: Function) {
+  delete(movie: Movie) {
     const dialogData: DialogData = <DialogData>{
       question: `Are you sure you want to delete the tasks with id '${movie.id}'?`,
       title: `Delete task ${movie.title}`,
@@ -208,20 +107,20 @@ export class MovieService {
       console.log('The dialog was closed');
       console.log(dialogDataResponse.result);
       if (dialogDataResponse.result) {
-        this._http.delete(`${this.baseUrl}tasks/${movie.id}`)
-          .subscribe
-          (
-            () => {
-              const snackBar = <SnackbarData>{message: 'Task was successfully deleted!', action: 'Close', duration: 2000};
-              this.snackbarService.openSnackBar(snackBar);
-              refreshDataCallback();
-            },
-            () => {
-              const snackBar = <SnackbarData>{message: 'Cannot delete task - maybe it has comments?', action: 'Close', duration: 2000};
-              this.snackbarService.openSnackBar(snackBar);
-              refreshDataCallback();
-            }
-          );
+        this.movieApiService.delete(movie.id).subscribe
+        (
+          () => {
+            const snackBar = <SnackbarData>{message: 'Task was successfully deleted!', action: 'Close', duration: 2000};
+            this.snackbarService.openSnackBar(snackBar);
+          },
+          () => {
+            const snackBar = <SnackbarData>{message: 'Cannot delete task - maybe it has comments?', action: 'Close', duration: 2000};
+            this.snackbarService.openSnackBar(snackBar);
+          },
+          () => {
+            this.refreshEmitter.emit();
+          }
+        );
       }
     });
   }

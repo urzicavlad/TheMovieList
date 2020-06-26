@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 
 export class Comment {
   message: string;
-  user: User;
+  author: User;
   thumbsUp: User[];
   thumbsDown: User[];
 }

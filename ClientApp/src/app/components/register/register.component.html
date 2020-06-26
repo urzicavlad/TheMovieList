@@ -7,6 +7,11 @@
     <mat-card-content>
       <mat-form-field class="example-full-width">
         <label>
+          <input type="email" matInput placeholder="Username" name="username" [(ngModel)]="register.username">
+        </label>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <label>
           <input type="email" matInput placeholder="Email" name="email" [(ngModel)]="register.email">
         </label>
       </mat-form-field>
@@ -14,6 +19,18 @@
       <mat-form-field class="example-full-width">
         <label>
           <input type="password" matInput placeholder="Password" name="password" [(ngModel)]="register.password">
+        </label>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <label>
+          <input type="email" matInput placeholder="Role" name="role" [(ngModel)]="register.role">
+        </label>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <label>
+          <input type="text" matInput placeholder="Avatar URL" name="avatar" [(ngModel)]="register.avatar">
         </label>
       </mat-form-field>
 

@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {MatDialogRef} from '@angular/material/dialog';
 import {Actor, ActorService} from '../../services/actor.service';
-import {Genre, MovieService} from '../../services/movie.service';
+import {MovieApiService} from '../../services/api/movie.api.service';
+import {ActorApiService} from '../../services/api/actor.api.service';
 
 
 @Component({
@@ -14,13 +15,14 @@ export class CreateMovieModalComponent implements OnInit {
   movieForm: FormGroup;
   genres = new FormControl();
   actors = new FormControl();
-  genreList: Genre[] = [];
+  genreList: string[] = [];
   actorList: Actor[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<CreateMovieModalComponent>,
     private formBuilder: FormBuilder,
-    private actorService: ActorService
+    private actorApiService: ActorApiService,
+    private movieApiService: MovieApiService
   ) {
     this.movieForm = this.formBuilder.group({
       title: [''],
@@ -29,6 +31,7 @@ export class CreateMovieModalComponent implements OnInit {
       releaseDate: [''],
       originalTitle: [''],
       storyline: [''],
+      posterUrl: [''],
       actors: this.actors,
     });
   }
@@ -44,8 +47,8 @@ export class CreateMovieModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.actorService.loadActors().subscribe(actors => this.actorList = actors);
-    // this.movieService.getAvailableGenres().subscribe(genres => this.genreList = genres);
+    this.actorApiService.loadActors().subscribe(actors => this.actorList = actors);
+    this.movieApiService.getAvailableGenres().subscribe(genres => this.genreList = genres);
   }
 
 }

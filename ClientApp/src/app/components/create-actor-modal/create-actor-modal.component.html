@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Add new Movie</h1>
+
+<form mat-dialog-content [formGroup]="actorForm">
+  <mat-form-field hintLabel="Max 100 characters" appearance="fill">
+    <mat-label>Title</mat-label>
+    <input matInput #input maxlength="100" placeholder="Ex. Al Pacino"
+           formControlName="name" id="name" name="name">
+    <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
+  </mat-form-field>
+
+</form>
+
+<div mat-dialog-actions>
+  <button mat-button color="warn" (click)="onCancel()">Cancel</button>
+  <button mat-button color="primary" (click)="onSave()">Save</button>
+</div>

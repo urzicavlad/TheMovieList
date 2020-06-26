@@ -1,5 +1,9 @@
 <h1 class="mat-display-4">{{movie.title}}</h1>
-
+<div class="align-content-center">
+  <img style="width: 200px"
+       src="{{movie.posterUrl}}"
+       alt="poster">
+</div>
 <mat-accordion>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
@@ -7,7 +11,17 @@
       <mat-panel-description>Actors from {{movie.title}}</mat-panel-description>
     </mat-expansion-panel-header>
     <div *ngFor="let actor of movie.actors">
-      <mat-label>{{actor}}</mat-label>
+      <mat-label>{{actor.name}}</mat-label>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Genres</mat-panel-title>
+      <mat-panel-description>Genres for {{movie.title}}</mat-panel-description>
+    </mat-expansion-panel-header>
+    <div *ngFor="let genre of movie.genres">
+      <mat-label>{{genre.genreType}}</mat-label>
     </div>
   </mat-expansion-panel>
 
@@ -17,7 +31,7 @@
       <mat-panel-description>Storyline for {{movie.title}}</mat-panel-description>
     </mat-expansion-panel-header>
     <div>
-      <p>{{movie.storyline}}</p>
+      <p>{{movie.storyLine}}</p>
     </div>
   </mat-expansion-panel>
 
@@ -32,18 +46,7 @@
       <app-movie-comment [comment]="comment"></app-movie-comment>
     </div>
 
-    <mat-card>
-      <mat-card-title>Add a comment!</mat-card-title>
-      <mat-card-content>
-        <mat-form-field>
-          <mat-label>Comment</mat-label>
-          <textarea matInput></textarea>
-        </mat-form-field>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button>Submit</button>
-      </mat-card-actions>
-    </mat-card>
+    <app-movie-comment-add (refreshEmitter)="loadComments()"></app-movie-comment-add>
 
   </mat-expansion-panel>
 </mat-accordion>

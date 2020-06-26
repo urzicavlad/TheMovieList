@@ -4,6 +4,8 @@ import {Observable} from 'rxjs';
 import {YesNoDialogComponent} from '../components/yes-no-dialog/yes-no-dialog.component';
 import {CreateMovieModalComponent} from '../components/create-movie-modal/create-movie-modal.component';
 import {Movie} from './movie.service';
+import {CreateActorModalComponent} from '../components/create-actor-modal/create-actor-modal.component';
+import {Actor} from './actor.service';
 
 
 export interface DialogData {
@@ -28,12 +30,21 @@ export class DialogService {
     });
     return dialogRef.afterClosed();
   }
-  openCreateDialog(): Observable<Movie> {
+  openCreateMovieDialog(): Observable<Movie> {
     const dialogRef = this.dialog.open(CreateMovieModalComponent, {
       width: '600px',
       height: '600px'
     });
     return dialogRef.afterClosed();
   }
+  openCreateActorDialog(): Observable<Actor> {
+    const dialogRef = this.dialog.open(CreateActorModalComponent, {
+      width: '600px',
+      height: '600px'
+    });
+    return dialogRef.afterClosed();
+  }
+
 }
+
 

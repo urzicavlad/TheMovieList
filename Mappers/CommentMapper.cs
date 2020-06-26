@@ -24,6 +24,9 @@ namespace TheMovieList.Mappers
             CommentResponse result = new CommentResponse();
             result.Id = comment.Id;
             result.Message = comment.Message;
+            result.Author = comment.Author;
+            result.ThumbsUp = comment.ThumbsUp;
+            result.ThumbsDown = comment.ThumbsDown;
             return result;
         }
 

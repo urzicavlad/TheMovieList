@@ -1,6 +1,7 @@
 import {Token} from './security.models';
+import {Injectable} from '@angular/core';
 
-
+@Injectable()
 export class TokenService {
 
   saveToken(token: Token) {
@@ -9,12 +10,10 @@ export class TokenService {
   }
 
   getToken(): Token | null {
-    console.log('Getting token from local storage!');
     return this.validate(JSON.parse(localStorage.getItem('token') as string));
   }
 
   validate(token: Token | null): Token | null {
-    console.log('Validating token from local storage!');
     if (token) {
       if (new Date(token.expiry) > new Date()) {
         return token;

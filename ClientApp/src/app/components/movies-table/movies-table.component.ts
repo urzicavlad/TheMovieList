@@ -15,7 +15,7 @@ import {Router} from '@angular/router';
 })
 export class MoviesTableComponent implements OnInit {
 
-  displayedColumns: string[] = ['id', 'title', 'year', 'duration', 'releaseDate', 'originalTitle', 'imdbRating'];
+  displayedColumns: string[] = ['id', 'title', 'duration', 'releaseDate', 'originalTitle'];
   dataSource: MatTableDataSource<Movie>;
   numberOfResults: number;
   isLoadingResults = true;
@@ -71,13 +71,13 @@ export class MoviesTableComponent implements OnInit {
   triggerToolbarEvent(toolbarEvent: ToolbarEvent) {
     switch (toolbarEvent) {
       case ToolbarEvent.CREATE:
-        this.movieService.save(this.loadData);
+        this.movieService.save();
         break;
       case ToolbarEvent.DELETE:
-        this.movieService.delete(this.selected, this.loadData);
+        this.movieService.delete(this.selected);
         break;
       case ToolbarEvent.EDIT:
-        this.movieService.delete(this.selected, this.loadData);
+        this.movieService.edit(this.selected);
         break;
       case ToolbarEvent.MORE:
         this.router.navigate(['/movies', this.selected.id]).then(() => console.log('Successfuly navigate on /movies/:id'));
@@ -85,8 +85,15 @@ export class MoviesTableComponent implements OnInit {
       case ToolbarEvent.TOGGLE_DASHBOARD:
         this.isDashboardActive = !this.isDashboardActive;
         break;
-
     }
+    this.movieService.getRefreshEmitter().subscribe(() => this.ngOnInit());
+  }
+
+  setToolbarTitle() {
+    if (this.selected === undefined) {
+      return 'Toolbar';
+    }
+    return this.selected.title;
   }
 }
 

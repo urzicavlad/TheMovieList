@@ -15,7 +15,11 @@ namespace TheMovieList.Contexts
 
     public DbSet<Genre> Genres { get; set; }
 
+    public DbSet<Actor> Actor { get; set; }
+
     public DbSet<Comment> Comments { get; set; }
+
+    public DbSet<User> User { get; set; }
 
     public DbSet<MovieActor> MovieActors { get; set; }
 

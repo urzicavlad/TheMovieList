@@ -10,6 +10,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using TheMovieList.Models.Account;
+using TheMovieList.Models;
+using TheMovieList.Contexts;
+using System.Linq;
 
 namespace TheMovieList.Controllers
 {
@@ -21,21 +24,25 @@ namespace TheMovieList.Controllers
 
         private readonly IConfiguration configuration;
 
+        private MoviesDbContext _context;
+
         public AccountController(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            MoviesDbContext _context
+            )
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = configuration;
+            this._context = _context;
         }
 
         [HttpPost]
         public async Task<ActionResult> Register([FromBody] RegisterModel registerModel)
         {
-            IdentityUser identityUser = new IdentityUser() { Email = registerModel.Email, UserName = registerModel.Email  };
-
+            IdentityUser identityUser = new IdentityUser() { Email = registerModel.Email, UserName = registerModel.Username  };
             IdentityResult result = await userManager.CreateAsync(identityUser, registerModel.Password);
 
             if (!result.Succeeded)
@@ -43,18 +50,28 @@ namespace TheMovieList.Controllers
                 return BadRequest(result.ToString());
             }
 
-            IdentityUser user = await userManager.FindByEmailAsync(registerModel.Email);
+            IdentityUser identityUserToLogIn = await userManager.FindByEmailAsync(registerModel.Email);
 
-            await LoginUser(user, registerModel.Password, false);
+            User user = new User();
+            user.Username = registerModel.Username;
+            user.Role = registerModel.Role;
+            user.Avatar = registerModel.Avatar;
+            _context.User.Add(user);
+            _context.SaveChanges();
 
-            return Ok(GenerateToken(registerModel.Email, user));
+            await LoginUser(identityUserToLogIn, registerModel.Password, false);
+
+            LoginModel login = new LoginModel();
+            login.Email = registerModel.Email;
+            login.Password = registerModel.Password;
+            return await Login(login);
         }
 
         [HttpPost]
         public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
         {
-            IdentityUser user = await userManager.FindByEmailAsync(loginModel.Email);
-            Microsoft.AspNetCore.Identity.SignInResult result = await LoginUser(user, loginModel.Password, true);
+            IdentityUser identityUser = await userManager.FindByEmailAsync(loginModel.Email);
+            Microsoft.AspNetCore.Identity.SignInResult result = await LoginUser(identityUser, loginModel.Password, true);
             if (!result.Succeeded)
             {
                 if (result.IsLockedOut)
@@ -63,8 +80,9 @@ namespace TheMovieList.Controllers
                 }
                 return BadRequest("WrongUserOrPassword");
             }
+            User user = _context.User.Where(user => user.Username == identityUser.UserName).FirstOrDefault();
 
-            return Ok(GenerateToken(loginModel.Email, user));
+            return Ok(GenerateToken(loginModel.Email, identityUser, user));
         }
 
         private async Task<Microsoft.AspNetCore.Identity.SignInResult> LoginUser(IdentityUser user, string password, bool lockout)
@@ -78,13 +96,13 @@ namespace TheMovieList.Controllers
             return;
         }
 
-        private Token GenerateToken(string email, IdentityUser user)
+        private Token GenerateToken(string email, IdentityUser identityUser, User user)
         {
             List<Claim> claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, identityUser.Id.ToString())
             };
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration.GetValue<string>("Authentication:Secret")));
@@ -101,7 +119,8 @@ namespace TheMovieList.Controllers
             {
                 Value = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiry = token.ValidTo,
-                Email = email
+                Email = email,
+                User = user
             };
         }
 
