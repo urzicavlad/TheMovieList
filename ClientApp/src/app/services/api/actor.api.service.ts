@@ -17,4 +17,7 @@ export class ActorApiService {
     return this._http.post<Actor>(`${this.baseUrl}actors`, actor);
   }
 
+  delete(actorId: number): Observable<Actor> {
+    return this._http.delete<Actor>(`${this.baseUrl}actors/${actorId}`);
+  }
 }

@@ -73,9 +73,9 @@ export class ActorsTableComponent implements OnInit {
       case ToolbarEvent.CREATE:
         this.actorService.save();
         break;
-      // case ToolbarEvent.DELETE:
-      //   this.movieService.delete(this.selected);
-      //   break;
+      case ToolbarEvent.DELETE:
+        this.actorService.delete(this.selected);
+        break;
       // case ToolbarEvent.EDIT:
       //   this.movieService.edit(this.selected);
       //   break;

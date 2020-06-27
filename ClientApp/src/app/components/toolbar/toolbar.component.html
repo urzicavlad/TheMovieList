@@ -5,22 +5,17 @@
       <mat-icon>add</mat-icon>
       More
     </button>
-    <button mat-button (click)="onEdit()">
+    <button *ngIf="applicationService.isAdmin()" mat-button (click)="onEdit()">
       <mat-icon>edit</mat-icon>
       Edit
     </button>
-    <button mat-button (click)="onDelete()">
+    <button *ngIf="applicationService.isAdmin()" mat-button (click)="onDelete()">
       <mat-icon>delete_forever</mat-icon>
       Delete
     </button>
   </div>
-  <button mat-button matBadge="{{numberOfItems}}" matBadgePosition="above after" (click)="onCreate()">
+  <button *ngIf="applicationService.isAdmin()" mat-button matBadge="{{numberOfItems}}" matBadgePosition="above after" (click)="onCreate()">
     <mat-icon>library_add</mat-icon>
     New
-  </button>
-  <span class="spacer"></span>
-  <button mat-button (click)="onDashboard()">
-    <mat-icon>dashboard</mat-icon>
-    Dashboard
   </button>
 </mat-toolbar>

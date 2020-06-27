@@ -12,7 +12,7 @@ export class Genre {
   genreType: string;
 }
 
-export class Movie {
+export interface Movie {
   id: number;
   title: string;
   originalTitle: string;
@@ -74,32 +74,30 @@ export class MovieService {
   }
 
   edit(oldMovie: Movie) {
-    // this.dialogService.openEditTaskDialog(oldMovie).subscribe(movieToBeEdited => {
-    //   console.log('The dialog was closed');
-    //   if (movieToBeEdited) {
-    //     movieToBeEdited.id = oldMovie.id;
-    //     console.log(movieToBeEdited);
-    //     this._http.put<Movie>(`${this.baseUrl}movies/${oldMovie.id}`, movieToBeEdited)
-    //       .subscribe
-    //       (
-    //         () => {
-    //           const snackBar = <SnackbarData>{message: 'Task was successfully edited and saved!', action: 'Close', duration: 2000};
-    //           this.snackbarService.openSnackBar(snackBar);
-    //           refreshDataCallback();
-    //         },
-    //         () => {
-    //           const snackBar = <SnackbarData>{message: 'Cannot save task - maybe it is our fault!', action: 'Close', duration: 2000};
-    //           this.snackbarService.openSnackBar(snackBar);
-    //           refreshDataCallback();
-    //         }
-    //       );
-    //   }
-    // });
+    this.dialogService.openEditMovieDialog(oldMovie).subscribe(movieToBeEdited => {
+      console.log('The dialog was closed');
+      if (movieToBeEdited) {
+        movieToBeEdited.id = oldMovie.id;
+        console.log(movieToBeEdited);
+        this.movieApiService.update(movieToBeEdited)
+          .subscribe
+          (
+            () => {
+              const snackBar = <SnackbarData>{message: 'Movie was successfully edited and saved!', action: 'Close', duration: 2000};
+              this.snackbarService.openSnackBar(snackBar);
+            },
+            () => {
+              const snackBar = <SnackbarData>{message: 'Cannot save Movie - maybe it is our fault!', action: 'Close', duration: 2000};
+              this.snackbarService.openSnackBar(snackBar);
+            }
+          );
+      }
+    });
   }
 
   delete(movie: Movie) {
     const dialogData: DialogData = <DialogData>{
-      question: `Are you sure you want to delete the tasks with id '${movie.id}'?`,
+      question: `Are you sure you want to delete the movie with id '${movie.id}'?`,
       title: `Delete task ${movie.title}`,
       result: false
     };
@@ -110,11 +108,11 @@ export class MovieService {
         this.movieApiService.delete(movie.id).subscribe
         (
           () => {
-            const snackBar = <SnackbarData>{message: 'Task was successfully deleted!', action: 'Close', duration: 2000};
+            const snackBar = <SnackbarData>{message: 'Movie was successfully deleted!', action: 'Close', duration: 2000};
             this.snackbarService.openSnackBar(snackBar);
           },
           () => {
-            const snackBar = <SnackbarData>{message: 'Cannot delete task - maybe it has comments?', action: 'Close', duration: 2000};
+            const snackBar = <SnackbarData>{message: 'Cannot delete Movie - maybe it is our fault!', action: 'Close', duration: 2000};
             this.snackbarService.openSnackBar(snackBar);
           },
           () => {

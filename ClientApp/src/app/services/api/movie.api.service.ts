@@ -45,4 +45,7 @@ export class MovieApiService {
     return this._http.post<Comment>(`${this.baseUrl}movies/${movieId}/comments`, comment);
   }
 
+  update(movieToBeEdited: any): Observable<Movie> {
+    return null;
+  }
 }

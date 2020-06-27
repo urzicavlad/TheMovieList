@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -29,10 +30,19 @@ namespace ToDoApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ActorResponse>> PostComment(long movieId, AddActorRequest addActorRequest)
+        public async Task<ActionResult<ActorResponse>> PostActor(AddActorRequest addActorRequest)
         {
             Actor actor = ActorMapper.mapFormAddActorRequestToActor(addActorRequest);
             _context.Actor.Add(actor);
+            await _context.SaveChangesAsync();
+            return Ok(ActorMapper.mapFormActorToActorResponse(actor));
+        }
+
+        [HttpDelete("{actorId}")]
+        public async Task<ActionResult<ActorResponse>> DeleteActor(long actorId)
+        {
+            var actor = _context.Actor.Include(actor => actor.Movies).FirstOrDefault(actor=> actor.Id == actorId);
+            _context.Actor.Remove(actor);
             await _context.SaveChangesAsync();
             return Ok(ActorMapper.mapFormActorToActorResponse(actor));
         }

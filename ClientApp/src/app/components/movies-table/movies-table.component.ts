@@ -56,6 +56,7 @@ export class MoviesTableComponent implements OnInit {
     this.movieService.loadMovies().subscribe(movies => {
       this.isLoadingResults = false;
       this.numberOfResults = movies.length;
+      movies.map(movie => movie.releaseDate = movie.releaseDate.substring(0, 10));
       this.dataSource = new MatTableDataSource<Movie>(movies);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

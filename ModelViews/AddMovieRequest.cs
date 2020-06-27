@@ -13,6 +13,7 @@ using System.Collections.Generic;
         public string StoryLine { get; set; }
         public string PosterUrl { get; set; }
         public List<string> Genres { get; set; }
+        public List<Actor> Actors { get; set; }
     }
 
  }

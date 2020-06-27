@@ -37,6 +37,14 @@ export class DialogService {
     });
     return dialogRef.afterClosed();
   }
+  openEditMovieDialog(oldMovie: Movie) {
+    const dialogRef = this.dialog.open(CreateMovieModalComponent, {
+      width: '600px',
+      height: '600px',
+      data: oldMovie
+    });
+    return dialogRef.afterClosed();
+  }
   openCreateActorDialog(): Observable<Actor> {
     const dialogRef = this.dialog.open(CreateActorModalComponent, {
       width: '600px',

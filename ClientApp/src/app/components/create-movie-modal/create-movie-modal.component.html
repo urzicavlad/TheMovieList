@@ -4,40 +4,40 @@
   <mat-form-field hintLabel="Max 100 characters" appearance="fill">
     <mat-label>Title</mat-label>
     <input matInput #input maxlength="100" placeholder="Ex. Titanic"
-           formControlName="title" id="title" name="title">
+           formControlName="title" id="title" name="title" [(ngModel)]="data.title">
     <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
   </mat-form-field>
 
   <mat-form-field hintLabel="Max 100 characters" appearance="fill">
     <mat-label>Original Title</mat-label>
     <input matInput #input maxlength="100" placeholder="Ex. Titanic"
-           formControlName="originalTitle" id="originalTitle" name="originalTitle">
+           formControlName="originalTitle" id="originalTitle" name="originalTitle" [(ngModel)]="data.originalTitle">
     <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
   </mat-form-field>
 
   <mat-form-field hintLabel="Max 100 characters" appearance="fill">
     <mat-label>Duration</mat-label>
     <input matInput #input maxlength="100" placeholder="Ex. 1000"
-           formControlName="duration" id="duration" name="duration">
+           formControlName="duration" id="duration" name="duration" [(ngModel)]="data.duration">
     <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Storyline</mat-label>
     <textarea matInput formControlName="storyline"
-              id="storyline" name="storyline"></textarea>
+              id="storyline" name="storyline" [(ngModel)]="data.storyLine"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Poster URL</mat-label>
     <textarea matInput formControlName="posterUrl"
-              id="posterUrl" name="posterUrl"></textarea>
+              id="posterUrl" name="posterUrl" [(ngModel)]="data.posterUrl"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Release Date</mat-label>
     <input matInput [matDatepicker]="releaseDatePicker"
-           formControlName="releaseDate" id="releaseDate" name="releaseDate">
+           formControlName="releaseDate" id="releaseDate" name="releaseDate" [(ngModel)]="data.releaseDate">
     <mat-datepicker-toggle matSuffix [for]="releaseDatePicker"></mat-datepicker-toggle>
     <mat-datepicker #releaseDatePicker></mat-datepicker>
   </mat-form-field>
@@ -47,7 +47,7 @@
     <mat-label>Actors</mat-label>
     <mat-select [formControl]="actors" multiple>
       <mat-select-trigger>
-        {{actors.value ? actors.value[0] : ''}}
+        {{actors.value ? actors.value[0].name : ''}}
         <span *ngIf="actors.value?.length > 1">
         (+{{actors.value.length - 1}} {{actors.value?.length === 2 ? 'other' : 'others'}})
       </span>

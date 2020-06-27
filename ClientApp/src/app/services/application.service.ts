@@ -13,6 +13,10 @@ export class ApplicationService {
     return this.tokenService.getToken() != null;
   }
 
+  isAdmin() {
+    return this.tokenService.getToken().user.role === 'ADMIN';
+  }
+
   userEmail() {
     const token = this.tokenService.getToken();
 

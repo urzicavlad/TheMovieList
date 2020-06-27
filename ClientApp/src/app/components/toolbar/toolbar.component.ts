@@ -1,4 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {TokenService} from '../../services/security/token.service';
+import {ApplicationService} from '../../services/application.service';
 
 
 export enum ToolbarEvent {
@@ -25,6 +27,9 @@ export class ToolbarComponent {
   @Input() activeToolbar;
   @Input() toolbarTitle = 'Toolbar';
   @Output() toolbarEvent: EventEmitter<ToolbarEvent> = new EventEmitter<ToolbarEvent>();
+
+  constructor(public applicationService: ApplicationService) {
+  }
 
 
   onDelete() {

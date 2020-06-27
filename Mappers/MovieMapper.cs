@@ -51,6 +51,7 @@ namespace TheMovieList.Mappers
             result.OriginalTitle = movieRequest.OriginalTitle;
             result.StoryLine = movieRequest.StoryLine;
             result.PosterUrl = movieRequest.PosterUrl;
+         
             foreach (var genreAsString in movieRequest.Genres)
             {
                 GenreType genreType = (GenreType)Enum.Parse(typeof(GenreType), genreAsString);

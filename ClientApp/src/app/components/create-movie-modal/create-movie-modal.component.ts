@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {MatDialogRef} from '@angular/material/dialog';
-import {Actor, ActorService} from '../../services/actor.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {Actor} from '../../services/actor.service';
 import {MovieApiService} from '../../services/api/movie.api.service';
 import {ActorApiService} from '../../services/api/actor.api.service';
+import {Movie} from '../../services/movie.service';
 
 
 @Component({
@@ -19,11 +20,13 @@ export class CreateMovieModalComponent implements OnInit {
   actorList: Actor[] = [];
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: Movie,
     public dialogRef: MatDialogRef<CreateMovieModalComponent>,
     private formBuilder: FormBuilder,
     private actorApiService: ActorApiService,
     private movieApiService: MovieApiService
   ) {
+    this.assignDefaultValues();
     this.movieForm = this.formBuilder.group({
       title: [''],
       genres: this.genres,
@@ -34,6 +37,23 @@ export class CreateMovieModalComponent implements OnInit {
       posterUrl: [''],
       actors: this.actors,
     });
+  }
+
+  assignDefaultValues() {
+    if (this.data === null) {
+      this.data = {
+        actors: [],
+        comments: [],
+        duration: '',
+        genres: [],
+        id: 0,
+        originalTitle: '',
+        posterUrl: '',
+        releaseDate: '',
+        storyLine: '',
+        title: ''
+      };
+    }
   }
 
   onCancel() {

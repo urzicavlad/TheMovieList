@@ -38,7 +38,7 @@
             <a class="nav-link text-dark" [routerLink]="['/login']">Login</a>
           </li>
           <li *ngIf="applicationService.isLoggedIn()" class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" (click)="securityService.logout()">Logout</a>
+            <a class="nav-link text-dark" [routerLink]="['/']" (click)="securityService.logout()" >Logout</a>
           </li>
           <li *ngIf="!applicationService.isLoggedIn()" class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/register']">Register</a>

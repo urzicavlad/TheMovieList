@@ -73,7 +73,27 @@ namespace TheMovieList.Controllers
             Movie movie = MovieMapper.mapFormAddMovieRequestToMovie(addMovieRequest);
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
+            foreach (var actor in addMovieRequest.Actors)
+            {
+                MovieActor movieActor = new MovieActor();
+                movieActor.ActorId = actor.Id;
+                movieActor.MovieId = movie.Id;
+                _context.MovieActors.Add(movieActor);
+            }
+            await _context.SaveChangesAsync();
             return Ok(MovieMapper.mapFromMovieToAddMovieResponse(movie));
+        }
+
+        [HttpDelete("{movieId}")]
+        public async Task<ActionResult<MovieResponse>> DeleteMovie(long movieId)
+        {
+            var movie = _context.Movies
+            .Include(movie => movie.Genres)
+            .Include(movie => movie.Comments)
+            .FirstOrDefault(movie=> movie.Id == movieId);
+            _context.Movies.Remove(movie);
+            await _context.SaveChangesAsync();
+            return Ok(MovieMapper.mapFromMovieToMovieResponse(movie));
         }
 
 
